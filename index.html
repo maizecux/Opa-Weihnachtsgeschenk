@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weihnachtsgeschenk für Opa Michael</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+        
+        /* Startseite */
+        .welcome-screen {
+            padding: 60px 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: white;
+        }
+        
+        .welcome-screen h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: fadeIn 1.5s ease-in;
+        }
+        
+        .welcome-screen .subtitle {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeIn 2s ease-in;
+        }
+        
+        .anchor {
+            font-size: 4em;
+            margin: 20px 0;
+            animation: swing 3s ease-in-out infinite;
+        }
+        
+        @keyframes swing {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .start-btn {
+            padding: 15px 40px;
+            font-size: 1.3em;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+            animation: fadeIn 2.5s ease-in;
+        }
+        
+        .start-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.6);
+        }
+        
+        /* Quiz-Bereich */
+        .quiz-screen {
+            display: none;
+            padding: 40px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #ecf0f1;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .puzzle-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            position: relative;
+            aspect-ratio: 1184/790;
+            background: #34495e;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .puzzle-grid {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .puzzle-piece {
+            position: absolute;
+            background: #2c3e50;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            cursor: default;
+        }
+        
+        .puzzle-piece svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .puzzle-piece.revealed {
+            animation: revealPiece 0.6s ease;
+        }
+        
+        @keyframes revealPiece {
+            0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(2deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        .puzzle-piece::before {
+            content: '?';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5em;
+            color: rgba(255,255,255,0.3);
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .puzzle-piece.revealed::before {
+            display: none;
+        }
+        
+        .puzzle-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .puzzle-piece.revealed .puzzle-image {
+            opacity: 1;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .question-card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+        
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .answer-btn {
+            padding: 15px 20px;
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+            text-align: left;
+        }
+        
+        .answer-btn:hover:not(:disabled) {
+            background: #3498db;
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .answer-btn.correct {
+            background: #2ecc71;
+            border-color: #27ae60;
+            color: white;
+            animation: correctAnswer 0.5s ease;
+        }
+        
+        .answer-btn.wrong {
+            background: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+            animation: wrongAnswer 0.5s ease;
+        }
+        
+        @keyframes correctAnswer {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes wrongAnswer {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Erfolgreich abgeschlossen */
+        .completion-screen {
+            display: none;
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+        
+        .completion-screen h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        
+        .completion-screen .revealed-image {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin: 30px 0;
+        }
+        
+        .completion-screen p {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .ship-emoji {
+            font-size: 5em;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .final-message {
+            background: rgba(255,255,255,0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-size: 1.2em;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Willkommensbildschirm -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <h1>Fröhliche Weihnachten</h1>
+            <h1>Opa Michael!</h1>
+            <div class="anchor">⚓</div>
+            <p class="subtitle">Ein seemännisches Abenteuer wartet auf dich</p>
+            <button class="start-btn" onclick="startQuiz()">🎁 Geschenk öffnen</button>
+        </div>
+
+        <!-- Quiz-Bereich -->
+        <div class="quiz-screen" id="quizScreen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0/15</div>
+            </div>
+
+            <div class="puzzle-container">
+                <div class="puzzle-grid" id="puzzleGrid"></div>
+            </div>
+
+            <div class="question-card" id="questionCard">
+                <h2 id="questionText"></h2>
+                <div class="answers" id="answersContainer"></div>
+                <div class="feedback" id="feedback"></div>
+            </div>
+        </div>
+
+        <!-- Abschlussbildschirm -->
+        <div class="completion-screen" id="completionScreen">
+            <div class="ship-emoji">⛵</div>
+            <h1>Herzlichen Glückwunsch!</h1>
+            <p>Du hast alle Fragen richtig beantwortet!</p>
+            
+            <img src="" alt="Dein Schiff" class="revealed-image" id="finalImage">
+            
+            <div class="final-message">
+                <p>🎁 Das von mir selbstgebaute Schiff wartet auf Dich und wird Dir mit dem nächsten "Christoph Express" im Februar ausgeliefert! 🎁</p>
+                <p style="margin-top: 20px;">🎄 Frohe Weihnachten, Opa Michael! 🎄</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // LEICHT - Fragen 1-5: Grundbegriffe
+            {
+                question: "Was bedeutet 'Ahoi'?",
+                answers: ["Auf Wiedersehen", "Ein Gruß zur See", "Mann über Bord", "Gefahr voraus"],
+                correct: 1
+            },
+            {
+                question: "Was ist der 'Bug' eines Schiffes?",
+                answers: ["Das Heck", "Die Vorderseite", "Das Steuer", "Der Mast"],
+                correct: 1
+            },
+            {
+                question: "Wie nennt man die Geschwindigkeit eines Schiffes?",
+                answers: ["Kilometer pro Stunde", "Meilen pro Stunde", "Knoten", "Seemeilen"],
+                correct: 2
+            },
+            {
+                question: "Was ist das 'Heck' eines Schiffes?",
+                answers: ["Die Vorderseite", "Die Hinterseite", "Die Seite", "Der Mast"],
+                correct: 1
+            },
+            {
+                question: "Welches ist das wichtigste Segel auf einem Segelschiff?",
+                answers: ["Spinnaker", "Großsegel", "Fock", "Besan"],
+                correct: 1
+            },
+            
+            // MITTEL - Fragen 6-10: Navigation und Seefahrt
+            {
+                question: "Was bedeutet der seemännische Begriff 'Backbord'?",
+                answers: ["Die linke Seite des Schiffes", "Die rechte Seite des Schiffes", "Das Heck des Schiffes", "Der Bug des Schiffes"],
+                correct: 0
+            },
+            {
+                question: "Welche Farbe hat die Steuerbordseite nachts?",
+                answers: ["Rot", "Grün", "Weiß", "Blau"],
+                correct: 1
+            },
+            {
+                question: "Was bedeutet 'Ankerlichten'?",
+                answers: ["Den Anker werfen", "Den Anker hochziehen", "Den Anker reinigen", "Den Anker reparieren"],
+                correct: 1
+            },
+            {
+                question: "Was ist eine 'Brise' in der Seemannssprache?",
+                answers: ["Eine Welle", "Ein Wind", "Ein Sturm", "Eine Strömung"],
+                correct: 1
+            },
+            {
+                question: "Wie viele Seemeilen sind ein nautischer Grad?",
+                answers: ["30 Seemeilen", "60 Seemeilen", "90 Seemeilen", "120 Seemeilen"],
+                correct: 1
+            },
+            
+            // SCHWER - Fragen 11-15: Spezialwissen
+            {
+                question: "Was ist ein 'Klüver'?",
+                answers: ["Ein Werkzeug zum Segeln", "Ein Vorsegel", "Eine Schiffsmannschaft", "Ein Navigationsgerät"],
+                correct: 1
+            },
+            {
+                question: "Wie viele Glasen läutet die Schiffsglocke bei Mitternacht?",
+                answers: ["4 Glasen", "6 Glasen", "8 Glasen", "12 Glasen"],
+                correct: 2
+            },
+            {
+                question: "Was bedeutet die Redewendung 'Drei Schlag achtern'?",
+                answers: ["Ein Notsignal", "Eine Kursangabe", "Eine Windstärke", "Ein Kommando zum Rudern"],
+                correct: 3
+            },
+            {
+                question: "Welcher Knoten wird auch als 'König der Knoten' bezeichnet?",
+                answers: ["Webeleinenstek", "Palstek", "Achtknoten", "Kreuzknoten"],
+                correct: 1
+            },
+            {
+                question: "Was bedeutet 'Hart Steuerbord' als seemännisches Kommando?",
+                answers: ["Volle Fahrt voraus", "Ruder ganz nach rechts", "Anker werfen", "Segel setzen"],
+                correct: 1
+            }
+        ];
+
+        // Puzzle-Teile Definitionen (15 unregelmäßige Teile)
+        const puzzlePieces = [
+            { x: 0, y: 0, width: 25, height: 35 },
+            { x: 25, y: 0, width: 20, height: 30 },
+            { x: 45, y: 0, width: 18, height: 38 },
+            { x: 63, y: 0, width: 22, height: 32 },
+            { x: 85, y: 0, width: 15, height: 35 },
+            
+            { x: 0, y: 35, width: 28, height: 32 },
+            { x: 28, y: 30, width: 24, height: 35 },
+            { x: 52, y: 38, width: 20, height: 29 },
+            { x: 72, y: 32, width: 18, height: 33 },
+            { x: 90, y: 35, width: 10, height: 32 },
+            
+            { x: 0, y: 67, width: 22, height: 33 },
+            { x: 22, y: 65, width: 26, height: 35 },
+            { x: 48, y: 67, width: 19, height: 33 },
+            { x: 67, y: 65, width: 20, height: 35 },
+            { x: 87, y: 67, width: 13, height: 33 }
+        ];
+
+        let currentQuestion = 0;
+        let revealOrder = [];
+        let shipImageLoaded = false;
+        const shipImage = new Image();
+
+        // Lade das hochgeladene Schiffsbild
+        shipImage.onload = function() {
+            shipImageLoaded = true;
+            console.log('Schiffsbild geladen!');
+        };
+        
+        shipImage.src = 'ship.jpg';
+
+        function startQuiz() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('quizScreen').style.display = 'block';
+            
+            // Erstelle zufällige Reihenfolge für das Aufdecken
+            revealOrder = Array.from({length: 15}, (_, i) => i);
+            shuffleArray(revealOrder);
+            
+            initPuzzle();
+            showQuestion();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function createPuzzleShape(index) {
+            // Erstelle SVG-Pfad für Puzzleteil-Form mit Nasen/Einbuchtungen
+            const hasTopTab = index >= 5 && Math.random() > 0.5;
+            const hasBottomTab = index < 10 && Math.random() > 0.5;
+            const hasLeftTab = index % 5 !== 0 && Math.random() > 0.5;
+            const hasRightTab = (index + 1) % 5 !== 0 && Math.random() > 0.5;
+            
+            const tabSize = 8;
+            let path = `M 0,${hasTopTab ? tabSize : 0} `;
+            
+            // Oben
+            if (hasTopTab) {
+                path += `Q ${tabSize},${tabSize} ${tabSize*2},${tabSize} Q ${tabSize*3},${tabSize} ${tabSize*4},0 `;
+            }
+            path += `L 100,${hasTopTab ? 0 : 0} `;
+            
+            // Rechts
+            if (hasRightTab) {
+                path += `Q 100,${tabSize} 100,${tabSize*2} Q 100,${tabSize*3} ${100-tabSize},${tabSize*4} `;
+            }
+            path += `L ${hasRightTab ? 100-tabSize : 100},100 `;
+            
+            // Unten
+            if (hasBottomTab) {
+                path += `Q ${tabSize*3},100 ${tabSize*2},100 Q ${tabSize},100 0,${100-tabSize} `;
+            }
+            path += `L 0,${hasBottomTab ? 100-tabSize : 100} `;
+            
+            // Links
+            if (hasLeftTab) {
+                path += `Q 0,${tabSize*3} 0,${tabSize*2} Q 0,${tabSize} ${tabSize},0 `;
+            }
+            path += 'Z';
+            
+            return path;
+        }
+
+        function initPuzzle() {
+            const grid = document.getElementById('puzzleGrid');
+            puzzlePieces.forEach((piece, index) => {
+                const pieceEl = document.createElement('div');
+                pieceEl.className = 'puzzle-piece';
+                pieceEl.id = `piece-${index}`;
+                pieceEl.style.left = piece.x + '%';
+                pieceEl.style.top = piece.y + '%';
+                pieceEl.style.width = piece.width + '%';
+                pieceEl.style.height = piece.height + '%';
+                
+                // Füge SVG-Maske für Puzzleform hinzu
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('viewBox', '0 0 100 100');
+                svg.style.position = 'absolute';
+                
+                const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                clipPath.id = `clip-${index}`;
+                
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', createPuzzleShape(index));
+                
+                clipPath.appendChild(path);
+                defs.appendChild(clipPath);
+                svg.appendChild(defs);
+                
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('width', '100');
+                rect.setAttribute('height', '100');
+                rect.setAttribute('fill', '#2c3e50');
+                rect.setAttribute('clip-path', `url(#clip-${index})`);
+                
+                svg.appendChild(rect);
+                pieceEl.appendChild(svg);
+                
+                // Bild-Container
+                const imgDiv = document.createElement('div');
+                imgDiv.className = 'puzzle-image';
+                imgDiv.style.clipPath = `url(#clip-${index})`;
+                pieceEl.appendChild(imgDiv);
+                
+                grid.appendChild(pieceEl);
+            });
+        }
+
+        function showQuestion() {
+            if (currentQuestion >= questions.length) {
+                showCompletion();
+                return;
+            }
+
+            const q = questions[currentQuestion];
+            document.getElementById('questionText').textContent = `Frage ${currentQuestion + 1}: ${q.question}`;
+            
+            const answersContainer = document.getElementById('answersContainer');
+            answersContainer.innerHTML = '';
+            
+            q.answers.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer;
+                btn.onclick = () => checkAnswer(index);
+                answersContainer.appendChild(btn);
+            });
+
+            document.getElementById('feedback').classList.remove('show');
+        }
+
+        function checkAnswer(selectedIndex) {
+            const q = questions[currentQuestion];
+            const buttons = document.querySelectorAll('.answer-btn');
+            const feedback = document.getElementById('feedback');
+            
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (selectedIndex === q.correct) {
+                buttons[selectedIndex].classList.add('correct');
+                feedback.textContent = '⚓ Richtig! Gut gemacht, Käpt\'n!';
+                feedback.className = 'feedback correct show';
+                
+                revealPuzzlePiece();
+                
+                setTimeout(() => {
+                    currentQuestion++;
+                    updateProgress();
+                    showQuestion();
+                }, 2000);
+            } else {
+                buttons[selectedIndex].classList.add('wrong');
+                buttons[q.correct].classList.add('correct');
+                feedback.textContent = '❌ Nicht ganz! Die richtige Antwort wurde markiert. Versuch\'s nochmal!';
+                feedback.className = 'feedback wrong show';
+                
+                setTimeout(() => {
+                    buttons.forEach(btn => {
+                        btn.classList.remove('wrong', 'correct');
+                        btn.disabled = false;
+                    });
+                    feedback.classList.remove('show');
+                }, 2500);
+            }
+        }
+
+        function revealPuzzlePiece() {
+            const pieceIndex = revealOrder[currentQuestion];
+            const piece = document.getElementById(`piece-${pieceIndex}`);
+            const puzzlePiece = puzzlePieces[pieceIndex];
+            
+            piece.classList.add('revealed');
+            
+            const imgDiv = piece.querySelector('.puzzle-image');
+            if (shipImageLoaded) {
+                imgDiv.style.backgroundImage = `url('${shipImage.src}')`;
+                imgDiv.style.backgroundSize = `${10000/puzzlePiece.width}% ${10000/puzzlePiece.height}%`;
+                imgDiv.style.backgroundPosition = `${(puzzlePiece.x * 100) / (100 - puzzlePiece.width)}% ${(puzzlePiece.y * 100) / (100 - puzzlePiece.height)}%`;
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / questions.length) * 100;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = `${currentQuestion}/15`;
+        }
+
+        function showCompletion() {
+            document.getElementById('quizScreen').style.display = 'none';
+            document.getElementById('completionScreen').style.display = 'block';
+            
+            const finalImage = document.getElementById('finalImage');
+            finalImage.src = shipImage.src;
+        }
+    </script>
+</body>
+</html>
